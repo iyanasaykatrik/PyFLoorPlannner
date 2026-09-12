@@ -26,15 +26,17 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
 fig,ax=plt.subplots()
-
-for room in data_rooms:
-    inside_plot=room[2]+room[0]<=plot_x and room[3]+room[1]<=plot_y and room[2]>=0 and room[3]>=0
-    valid_input=room[0]>0 and room[1]>0
-    if inside_plot and valid_input:
-        Room=Rectangle((room[2],room[3]),room[0],room[1],fill=False)
-        ax.add_patch(Room)
-    else:
-        print("Room doesn't fit inside plot or invalid input")    
+def check_rooms_valid():
+    for room in data_rooms:
+        inside_plot=room[2]+room[0]<=plot_x and room[3]+room[1]<=plot_y and room[2]>=0 and room[3]>=0
+        valid_input=room[0]>0 and room[1]>0
+        if inside_plot and valid_input:
+            Room=Rectangle((room[2],room[3]),room[0],room[1],fill=False)
+            ax.add_patch(Room)
+        else:
+            print("All rooms doesn't fit inside plot")
+            return False
+    return True
 
 #CHECK FOR OVERLAP
 
@@ -44,14 +46,17 @@ def check_overlap():
             overlap_x=data_rooms[i][2]+data_rooms[i][0]>data_rooms[j][2] and data_rooms[j][2]+data_rooms[j][0]>data_rooms[i][2]
             overlap_y=data_rooms[i][3]+data_rooms[i][1]>data_rooms[j][3] and data_rooms[j][3]+data_rooms[j][1]>data_rooms[i][3]
             if overlap_x and overlap_y:
-                print("The rooms overlap")
-                return True
-            
-    print("The rooms doesn't overlap")
-    return False
+                print("Rooms ",i+1," and ",j+1,"overlap")
+                return False                
+    
+    return True
 
-check_overlap()
-ax.set_xlim(0,plot_x)
-ax.set_ylim(0,plot_y)
-ax.set_aspect("equal")
-plt.show()
+#RENDERING THE ROOMS
+ 
+if check_rooms_valid() and check_overlap():
+    ax.set_xlim(0,plot_x)
+    ax.set_ylim(0,plot_y)
+    ax.set_aspect("equal")
+    plt.show()
+else:
+    print("Invalid layout")
