@@ -81,9 +81,23 @@ if check_plot_valid():
 else:
     print("Invalid setback and plot dimensions")
 
+#DEFINIGN ROOM BOUNDS
 def room_bounds(roomnum):
     left   = data_rooms[roomnum][3]
     right  = data_rooms[roomnum][3]+data_rooms[roomnum][1]
     bottom = data_rooms[roomnum][4]
     top    = data_rooms[roomnum][4] + data_rooms[roomnum][2]
     return left,right,bottom,top
+
+#CALCULATING AREA 
+def room_area(roomnum):
+    area=data_rooms[roomnum][1]*data_rooms[roomnum][2]
+    return area
+
+#DISTANCE BETWEEN EACH ROOM 
+def distance(r1,r2):
+    room1=room_bounds(r1)
+    room2=room_bounds(r2)
+    dx=max(room1[0]-room2[1],room2[0]-room1[1],0)
+    dy=max(room1[2]-room2[3],room2[2]-room1[3],0)
+    return (dx**2+dy**2)**0.5
