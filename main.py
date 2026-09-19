@@ -100,4 +100,9 @@ def distance(r1,r2):
     room2=room_bounds(r2)
     dx=max(room1[0]-room2[1],room2[0]-room1[1],0)
     dy=max(room1[2]-room2[3],room2[2]-room1[3],0)
-    return (dx**2+dy**2)**0.5
+    return round((dx**2+dy**2)**0.5,2)
+room_distances={}
+for i in range(0,no_of_rooms-1):
+    for j in range(i+1,no_of_rooms):
+        room_distances[f"R{i+1},R{j+1}"]=distance(i,j)
+print(room_distances)
