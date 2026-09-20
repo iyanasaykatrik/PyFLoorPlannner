@@ -106,3 +106,27 @@ for i in range(0,no_of_rooms-1):
     for j in range(i+1,no_of_rooms):
         room_distances[f"R{i+1},R{j+1}"]=distance(i,j)
 print(room_distances)
+
+#SPATIAL RELATIONSHIP BW ROOMS
+def spatial_relationship(r1,r2):
+    room1=room_bounds(r1)
+    room2=room_bounds(r2)
+    right=room1[0]<room2[1]
+    left=room2[0]<room1[1]
+    bottom=room1[2]>room2[3]
+    top=room2[2]>room1[3]
+    relation_list=[]
+    if right:
+        relation_list.append("right")
+    elif left:
+        relation_list.append("left")
+    if bottom:
+        relation_list.append("bottom")
+    elif top:
+        relation_list.append("top")
+    return relation_list
+room_spatial_relationship={}
+for i in range(0,no_of_rooms-1):
+    for j in range(i+1,no_of_rooms):
+        room_spatial_relationship[f"{j+1} wrt {i+1}"]=spatial_relationship(i,j)
+print(room_spatial_relationship)
