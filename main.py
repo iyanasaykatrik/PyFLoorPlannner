@@ -36,50 +36,36 @@ if check_plot_valid():
         data_rooms.append(Roomi)
         i+=1
         print(data_rooms)
-    #CHECKING FOR INVALID INPUTS
-    import matplotlib.pyplot as plt
-    from matplotlib.patches import Rectangle
-
-    fig,ax=plt.subplots()
-    def check_rooms_valid():
-        for room in data_rooms:
-            inside_plot=room[3]+room[1]<=plot_x-right_setback and room[4]+room[2]<=plot_y-rear_setback and room[3]>=left_setback and room[4]>=front_setback
-            valid_input=room[1]>0 and room[2]>0
-            if not(inside_plot and valid_input):
-                print("Invalid room position or dimension")
-                return False
-        print("All the inputs are valid")
-        return True
-    
-    #CHECK FOR OVERLAP
-    def check_overlap():
-        for i in range(0,no_of_rooms-1):
-            for j in range(i+1,no_of_rooms):
-                overlap_x=data_rooms[i][3]+data_rooms[i][1]>data_rooms[j][3] and data_rooms[j][3]+data_rooms[j][1]>data_rooms[i][3]
-                overlap_y=data_rooms[i][4]+data_rooms[i][2]>data_rooms[j][4] and data_rooms[j][4]+data_rooms[j][2]>data_rooms[i][4]
-                if overlap_x and overlap_y:
-                    print("Rooms ",i+1," and ",j+1,"overlap")
-                    return False                
-    
-        return True
-    
-    #ADDING ROOMS TO PLOT AND RENDERING THE ROOMS
-    if check_rooms_valid() and check_overlap():
-        for room in data_rooms:
-            Room=Rectangle((room[3],room[4]),room[1],room[2],fill=False)
-            ax.add_patch(Room)
-            ax.text(room[3]+room[1]/2,room[4]+room[2]/2,room[0],ha="center",va="center")
-        else:
-            setback=Rectangle([left_setback,front_setback],plot_x-right_setback-left_setback,plot_y-rear_setback-front_setback,fill=False)
-            ax.add_patch(setback)
-            ax.set_xlim(0,plot_x)
-            ax.set_ylim(0,plot_y)
-            ax.set_aspect("equal")
-            plt.show()
-    else:
-        print("Invalid layout")
 else:
     print("Invalid setback and plot dimensions")
+    raise SystemExit
+
+#CHECKING FOR INVALID INPUTS
+import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
+
+fig,ax=plt.subplots()
+def check_rooms_valid():
+    for room in data_rooms:
+        inside_plot=room[3]+room[1]<=plot_x-right_setback and room[4]+room[2]<=plot_y-rear_setback and room[3]>=left_setback and room[4]>=front_setback
+        valid_input=room[1]>0 and room[2]>0
+        if not(inside_plot and valid_input):
+            print("Invalid room position or dimension")
+            return False
+    print("All the inputs are valid")
+    return True
+    
+#CHECK FOR OVERLAP
+def check_overlap():
+    for i in range(0,no_of_rooms-1):
+        for j in range(i+1,no_of_rooms):
+            overlap_x=data_rooms[i][3]+data_rooms[i][1]>data_rooms[j][3] and data_rooms[j][3]+data_rooms[j][1]>data_rooms[i][3]
+            overlap_y=data_rooms[i][4]+data_rooms[i][2]>data_rooms[j][4] and data_rooms[j][4]+data_rooms[j][2]>data_rooms[i][4]
+            if overlap_x and overlap_y:
+                print("Rooms ",i+1," and ",j+1,"overlap")
+                return False                
+    
+    return True
 
 #DEFINIGN ROOM BOUNDS
 def room_bounds(roomnum):
@@ -111,8 +97,8 @@ print(room_distances)
 def spatial_relationship(r1,r2):
     room1=room_bounds(r1)
     room2=room_bounds(r2)
-    right=room1[0]<room2[1]
-    left=room2[0]<room1[1]
+    right=room1[1]<room2[0]
+    left=room2[1]<room1[0]
     bottom=room1[2]>room2[3]
     top=room2[2]>room1[3]
     relation_list=[]
@@ -130,3 +116,52 @@ for i in range(0,no_of_rooms-1):
     for j in range(i+1,no_of_rooms):
         room_spatial_relationship[f"{j+1} wrt {i+1}"]=spatial_relationship(i,j)
 print(room_spatial_relationship)
+
+#CHECKING MINIMUN DISTANCE B/W ROOMS
+d=float(input("Enter minimum distance b/w rooms: "))
+def min_clearance(r1,r2,d):
+    if distance(r1,r2)>=d:
+        return True
+    else:
+        return False
+
+def check_all_clearance():
+    min_clearance_rooms=[]
+    for i in range(0,no_of_rooms-1):
+        for j in range(i+1,no_of_rooms):
+            if min_clearance(i,j,d):
+                min_clearance_rooms.append(f"r{i+1}r{j+1}")
+            else:
+                return False
+    print(min_clearance_rooms)
+    return True
+  
+#DISTANCE FROM SETBACK BOUNDARY
+def distance_from_setback(r1):
+    room1=room_bounds(r1)
+    distance_left=room1[0]-left_setback
+    distance_right=plot_x-right_setback-room1[1]
+    distance_bottom=room1[2]-front_setback
+    distance_top=plot_y-rear_setback-room1[3]
+    return distance_left,distance_right,distance_bottom,distance_top
+
+distance_setback={}
+for i in range(0,no_of_rooms):
+    distance_setback[i+1]=distance_from_setback(i)
+print(distance_setback)
+    
+#ADDING ROOMS TO PLOT AND RENDERING THE ROOMS
+if check_rooms_valid() and check_overlap() and check_all_clearance():
+    for room in data_rooms:
+        Room=Rectangle((room[3],room[4]),room[1],room[2],fill=False)
+        ax.add_patch(Room)
+        ax.text(room[3]+room[1]/2,room[4]+room[2]/2,room[0],ha="center",va="center")
+    else:
+        setback=Rectangle([left_setback,front_setback],plot_x-right_setback-left_setback,plot_y-rear_setback-front_setback,fill=False)
+        ax.add_patch(setback)
+        ax.set_xlim(0,plot_x)
+        ax.set_ylim(0,plot_y)
+        ax.set_aspect("equal")
+        plt.show()
+else:
+    print("Invalid layout")
