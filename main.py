@@ -149,9 +149,20 @@ distance_setback={}
 for i in range(0,no_of_rooms):
     distance_setback[i+1]=distance_from_setback(i)
 print(distance_setback)
+
+def min_distance_from_setback():
+    setbacks=list(distance_setback.values())
+    setback_clearance=float(input("Enter minimunm distance from setback: "))
+    for i in setbacks:
+        if min(i)<setback_clearance:
+            return False
+    return True    
+    
+    
+
     
 #ADDING ROOMS TO PLOT AND RENDERING THE ROOMS
-if check_rooms_valid() and check_overlap() and check_all_clearance():
+if check_rooms_valid() and check_overlap() and check_all_clearance() and min_distance_from_setback():
     for room in data_rooms:
         Room=Rectangle((room[3],room[4]),room[1],room[2],fill=False)
         ax.add_patch(Room)
