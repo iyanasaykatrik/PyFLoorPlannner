@@ -223,3 +223,28 @@ def check_room_dimensions():
             print("Invalid room type")
             return False
     return True
+
+#CHECKING FOR MANDATORY ROOMS
+def check_for_existing_rooms():
+    mandatory_rooms=["main bedroom","kitchen","bathroom"]
+    rooms_found=[]
+    for i in mandatory_rooms:
+        for room in data_rooms:
+            if room[0].lower() == i:
+                rooms_found.append(i)
+            elif room[0].lower() == "bathroom + wc":
+                rooms_found.append("bathroom")
+    rooms_found=list(set(rooms_found))
+    if len(mandatory_rooms)==len(rooms_found):
+        return True
+    else:
+        return False
+
+#ROOM HEIGHT CONSTRAINT
+room_height = float(input("Enter room height: "))
+def check_min_height():
+    min_room_height=2.75
+    if room_height>=min_room_height:
+        return True
+    else:
+        return False
