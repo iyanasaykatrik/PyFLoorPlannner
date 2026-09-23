@@ -150,19 +150,16 @@ for i in range(0,no_of_rooms):
     distance_setback[i+1]=distance_from_setback(i)
 print(distance_setback)
 
-def min_distance_from_setback():
+def check_setback_clearance():
     setbacks=list(distance_setback.values())
     setback_clearance=float(input("Enter minimunm distance from setback: "))
     for i in setbacks:
         if min(i)<setback_clearance:
             return False
-    return True    
-    
-    
-
+    return True 
     
 #ADDING ROOMS TO PLOT AND RENDERING THE ROOMS
-if check_rooms_valid() and check_overlap() and check_all_clearance() and min_distance_from_setback():
+if check_rooms_valid() and check_overlap() and check_all_clearance() and check_setback_clearance():
     for room in data_rooms:
         Room=Rectangle((room[3],room[4]),room[1],room[2],fill=False)
         ax.add_patch(Room)
@@ -176,3 +173,53 @@ if check_rooms_valid() and check_overlap() and check_all_clearance() and min_dis
         plt.show()
 else:
     print("Invalid layout")
+
+#VERIFYING ROOM DIMENSIONS ACC TO NBC2016:
+def check_room_dimensions():
+    for room in data_rooms:
+        if room[0].lower() == "parking":
+            if room[1]>=6 and room[2]>=3:
+                pass
+            else:
+                return False
+
+        elif room[0].lower() == "main bedroom":
+            if room[2]>=2.4 and room_area(room)>=9.5:
+                pass
+            else:
+                return False
+
+        elif room[0].lower() == "secondary bedroom":
+            if room[2]>=2.1 and room_area(room)>=7.5:
+                pass
+            else:
+                return False
+            
+        elif room[0].lower() == "kitchen":
+            if room[2] >= 1.8 and room_area(room) >= 5.0:
+                pass
+            else:
+                return False
+            
+        elif room[0].lower() == "bathroom":
+            if room[2] >= 1.2 and room_area(room) >= 1.8:
+                pass
+            else:
+                return False
+
+        elif room[0].lower() == "wc":
+            if room[2] >= 0.9 and room_area(room) >= 1.1:
+                pass
+            else:
+                return False
+
+        elif room[0].lower() == "bathroom + wc":
+            if room[2] >= 1.2 and room_area(room) >= 2.8:
+                pass
+            else:
+                return False
+        
+        else:
+            print("Invalid room type")
+            return False
+    return True
