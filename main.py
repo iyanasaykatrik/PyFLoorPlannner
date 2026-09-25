@@ -248,3 +248,71 @@ def check_min_height():
         return True
     else:
         return False
+
+#VALIDATING WINDOW POSITION
+def check_window_position(roomnum, wall, position, width, height, sill_height):
+    wall = wall.lower()
+
+    if wall == "front" or wall == "back":
+        wall_length = data_rooms[roomnum][1]
+
+    elif wall == "left" or wall == "right":
+        wall_length = data_rooms[roomnum][2]
+
+    else:
+        return False
+
+    if position < 0 or width <= 0:
+        return False
+
+    if position + width > wall_length:
+        return False
+
+    if sill_height < 0 or height <= 0:
+        return False
+
+    if sill_height + height > room_height:
+        return False
+
+    return True
+
+# WINDOW
+
+window = []
+sill_height=float(input("Enter common window sill height: "))
+for i in range(0, no_of_rooms):
+
+    print("FOR ROOM", i+1)
+
+    no_of_windows = int(input("Enter no of windows: "))
+
+    for j in range(0, no_of_windows):
+
+        room_window = []
+
+        print("FOR WINDOW", j+1)
+
+        room_window.append(f"R{i+1}")
+        room_window.append(f"W{j+1}")
+
+        wall = input("Enter the desired wall: ")
+
+        position = float(input("Enter window's position: "))
+
+        width = float(input("Enter window's width: "))
+
+        height = float(input("Enter window's height: "))
+
+        if check_window_position(i, wall, position, width, height, sill_height):
+            room_window.append(wall.lower())
+            room_window.append(position)
+            room_window.append(width)
+            room_window.append(height)
+
+            window.append(room_window)
+
+            print("Window input is valid")
+        else:
+            print("Invalid window position or dimensions")
+
+print(window)
