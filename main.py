@@ -294,3 +294,58 @@ for i in range(0,no_of_rooms):
         else:
             print("Invalid window position or dimensions")
 print(window)
+
+#CHECKING WINDOW OVERLAP
+def check_window_overlap():
+    for i in range(0,len(window)-1):
+        for j in range(i+1,len(window)):
+            same_room=window[i][0]==window[j][0]
+            same_wall=window[i][2].lower()==window[j][2].lower()
+            overlap=window[i][3]+window[i][4]>window[j][3] and window[j][3]+window[j][4]>window[i][3]
+            if same_room and same_wall and overlap:
+                print(window[i][1],"and",window[j][1],"overlap")
+                return False
+    return True
+
+if check_window_overlap():
+    print("No window overlap")
+else:
+    print("Invalid window layout")
+
+#CALCULATING WINDOW AREA
+def total_window_area(roomnum):
+    area=0
+    for w in window:
+        if w[0]==f"R{roomnum+1}":
+            area+=w[4]*w[5]
+    return area
+
+window_areas={}
+for i in range(0,no_of_rooms):
+    window_areas[f"R{i+1}"]=total_window_area(i)
+print(window_areas)
+
+#WINDOW TO FLOOR AREA RATIO
+window_floor_ratio={}
+for i in range(0,no_of_rooms):
+    floor_area=room_area(i)
+    window_area=total_window_area(i)
+    window_floor_ratio[f"R{i+1}"]=round((window_area/floor_area)*100,2)
+print(window_floor_ratio)
+
+#CHECKING WINDOW AREA
+def check_window_area():
+    for i in range(0,no_of_rooms):
+        room_type=data_rooms[i][0].lower()
+        if room_type in ["main bedroom","secondary bedroom","kitchen"]:
+            required_area=room_area(i)/6
+            actual_area=total_window_area(i)
+            if actual_area<required_area:
+                print(f"Insufficient window area in R{i+1}")
+                return False
+    return True
+
+if check_rooms_valid() and check_overlap() and check_all_clearance() and min_distance_from_setback() and check_room_dimensions() and check_for_existing_rooms() and min_height() and check_window_overlap() and check_window_area():
+    print("Layout is valid")
+else:
+    print("Invalid layout")
